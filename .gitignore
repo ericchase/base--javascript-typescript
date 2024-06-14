@@ -30,4 +30,7 @@ build
 debug
 src-tauri/target
 
-Projects
+# Projects each have their own repository
+# Perhaps a list of projects and their repository links would be useful
+/Projects/*
+!/Projects/Readme.md
