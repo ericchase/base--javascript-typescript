@@ -33,7 +33,7 @@ export async function IterateLSD(
   callback?: (result: LSDResult) => void,
 ) {
   const { stdout = '', stderr } = await command;
-  if (stderr) console.log('Error:', stderr);
+  if (stderr) console.log('LSD Error:', stderr);
   const results = stdout
     .split('\n')
     .filter((line) => line.length > 0)

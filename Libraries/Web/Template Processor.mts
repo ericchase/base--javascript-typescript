@@ -1,47 +1,106 @@
-import * as Parser from 'node-html-parser.mts';
-import NodeFs from 'node:fs/promises.mts';
+import * as Parser from 'node-html-parser';
+import node_fs from 'node:fs/promises';
 
-const fileMap = new Map<string, string>();
-export async function loadHtmlFile(filepath: string) {
-  if (!fileMap.has(filepath)) {
-    const text = await NodeFs.readFile(filepath, { encoding: 'utf8' });
-    fileMap.set(filepath, text.trim());
+export async function LoadHtmlFile(filePath: string) {
+  try {
+    const html = await node_fs.readFile(filePath, { encoding: 'utf8' });
+    return Parser.parse(html);
+  } catch (err) {
+    throw 'Could not open file: ' + filePath;
   }
-  const text = fileMap.get(filepath);
-  if (text) {
-    return Parser.parse(text);
+}
+export async function SaveHtmlFile(root: Parser.HTMLElement, filePath: string) {
+  await node_fs.writeFile(filePath, root.toString(), { encoding: 'utf8' });
+}
+
+const includeMap = new Map<string, string>();
+export function RegisterIncludeSource(includeName: string, includeHTML: string) {
+  includeMap.set(includeName, includeHTML);
+}
+export async function LoadIncludeFile(includeName: string, includePath: string) {
+  try {
+    const html = await node_fs.readFile(includePath, { encoding: 'utf8' });
+    includeMap.set(includeName, html);
+    return html;
+  } catch (err) {
+    throw 'Could not open file: ' + includePath;
   }
-  throw 'Could not load ' + filepath + '.';
 }
-export async function saveHtmlFile(root: Parser.HTMLElement, filepath: string) {
-  await NodeFs.writeFile(filepath, root.toString(), { encoding: 'utf8' });
+async function getInclude(includeName: string) {
+  const html = includeMap.get(includeName);
+  if (html) {
+    return Parser.parse(html);
+  } else {
+    try {
+      return Parser.parse(await LoadIncludeFile(includeName, includeName + '.html'));
+    } catch (err) {
+      throw 'Could not load include: ' + includeName;
+    }
+  }
 }
-export async function processTemplateNode(root: Parser.HTMLElement) {
+
+export async function ProcessTemplateNode(root: Parser.HTMLElement) {
   const stack = toReversed(root.childNodes);
   while (stack.length > 0) {
-    const item = stack.pop()!;
-    if (item instanceof Parser.HTMLElement) {
-      if (item.tagName === 'INCLUDE') {
-        const newItem = await processInclude(item);
-        stack.push(...toReversed(newItem.childNodes));
+    const node = stack.pop()!;
+    if (node instanceof Parser.HTMLElement) {
+      if (node.tagName === 'INCLUDE') {
+        const newNode = await processInclude(node);
+        stack.push(...toReversed(newNode.childNodes));
       } else {
-        stack.push(...toReversed(item.childNodes));
+        stack.push(...toReversed(node.childNodes));
       }
     }
   }
   return root;
 }
-export async function processTemplateFile(templatePath: string, outputPath: string) {
-  saveHtmlFile(await processTemplateNode(await loadHtmlFile(templatePath)), outputPath);
+export async function ProcessTemplateFile(templatePath: string, outputPath: string) {
+  await SaveHtmlFile(await ProcessTemplateNode(await LoadHtmlFile(templatePath)), outputPath);
 }
 
-function toReversed(tree: Parser.Node[]) {
-  const reversed: Parser.Node[] = [];
-  for (let index = tree.length; index > 0; index--) {
-    reversed.push(tree[index - 1]);
+async function processInclude(oldItem: Parser.HTMLElement) {
+  const oldChildNodes = trimNodelist(oldItem.childNodes);
+  const includeName = Object.keys(oldItem.attributes)[0];
+  oldItem.removeAttribute(includeName);
+  const root = await getInclude(includeName);
+  const newItem = (function () {
+    const childNodes = trimNodelist(root.childNodes);
+    if (childNodes.length === 1) {
+      oldItem.replaceWith(childNodes[0]);
+      return childNodes[0];
+    }
+    if (childNodes.length > 1) {
+      oldItem.replaceWith(...childNodes);
+      // find first HTMLElement child if exists
+      for (const child of childNodes) {
+        if (child instanceof Parser.HTMLElement) {
+          return child;
+        }
+      }
+      return childNodes[0];
+    }
+    return oldItem;
+  })();
+  if (newItem !== oldItem) {
+    if (newItem instanceof Parser.HTMLElement) {
+      newItem.setAttributes({ ...oldItem.attributes, ...newItem.attributes });
+      const classList = [...oldItem.classList.values(), ...newItem.classList.values()];
+      for (const value of newItem.classList.values()) {
+        newItem.classList.remove(value);
+      }
+      for (const value of classList) {
+        newItem.classList.add(value);
+      }
+    }
+    if (oldChildNodes.length > 0) {
+      const slot = findSlot(root);
+      if (slot) slot.replaceWith(...oldChildNodes);
+    }
+    return newItem;
   }
-  return reversed;
+  return oldItem;
 }
+
 function findSlot(root: Parser.HTMLElement) {
   const stack = toReversed(root.childNodes);
   while (stack.length > 0) {
@@ -78,50 +137,10 @@ function trimNodelist(nodes: Parser.Node[]) {
   }
   return nodes.slice(start, end);
 }
-async function processInclude(oldItem: Parser.HTMLElement) {
-  const includeName = Object.keys(oldItem.attributes)[0];
-  oldItem.removeAttribute(includeName);
-  const root = await loadHtmlFile(includeName + '.html');
-  if (root) {
-    const childNodes = oldItem.childNodes;
-    const newItem = (function () {
-      switch (root.childNodes.length) {
-        case 0:
-          oldItem.replaceWith(root);
-          return root;
-        case 1:
-          oldItem.replaceWith(root.childNodes[0]);
-          return root.childNodes[0];
-        default:
-          for (const child of root.childNodes) {
-            if (child instanceof Parser.HTMLElement) {
-              oldItem.replaceWith(child);
-              return child;
-            }
-          }
-          break;
-      }
-      return oldItem;
-    })();
-    if (newItem instanceof Parser.HTMLElement) {
-      newItem.setAttributes({ ...oldItem.attributes, ...newItem.attributes });
-      const classList = [...oldItem.classList.values(), ...newItem.classList.values()];
-      for (const name of newItem.classList.values()) {
-        newItem.classList.remove(name);
-      }
-      for (const name of classList) {
-        newItem.classList.add(name);
-      }
-    }
-    if (newItem !== oldItem) {
-      if (childNodes.length > 0) {
-        const slot = findSlot(root);
-        if (slot) {
-          slot.replaceWith(...trimNodelist(childNodes));
-        }
-      }
-      return newItem;
-    }
+function toReversed(tree: Parser.Node[]) {
+  const reversed: Parser.Node[] = [];
+  for (let index = tree.length; index > 0; index--) {
+    reversed.push(tree[index - 1]);
   }
-  return oldItem;
+  return reversed;
 }

@@ -1,3 +1,4 @@
-import { processTemplateFile } from '../Template Processor.mts.mts';
+import { LoadIncludeFile, ProcessTemplateFile } from '../Template Processor.mts';
 
-processTemplateFile('./index.template.html', './index.html');
+await LoadIncludeFile('button', './component/button.html');
+await ProcessTemplateFile('./index.template.html', './index.html');
