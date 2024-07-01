@@ -1,4 +1,4 @@
-import { nChooseRCombinations, nChooseRPermutations, nCr, nPr } from './Combinatorics.mts';
+import { nChooseRCombinations, nChooseRPermutations, nCr, nPr } from './Combinatorics.js';
 
 import { describe, expect, test } from 'bun:test';
 

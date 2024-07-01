@@ -5,12 +5,11 @@
     "format": "prettier . --write"
   },
   "dependencies": {
-    "node-html-parser": "^6.1.13",
-    "prettier": "^3.3.2"
+    "node-html-parser": "^6.1.13"
   },
   "devDependencies": {
     "@types/bun": "^1.1.6",
     "@types/node": "^20.14.9",
-    "typescript": "^5.5.2"
+    "prettier": "^3.3.2"
   }
 }
