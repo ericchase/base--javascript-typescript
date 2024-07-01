@@ -2,7 +2,7 @@ import { OpenFile, ReadFile, WriteFile } from '../src/lib/Platform/Bun/Fs.js';
 import { FilterDirectoryTree } from '../src/lib/Platform/Cxx/LSD.js';
 
 const src = {
-  dir: './lib',
+  dir: './src',
   ext: '.ts',
   exclude: '.test.ts',
 };
