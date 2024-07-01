@@ -1,4 +1,4 @@
-import { levenshtein_distance } from './Levenshtein Distance.mts';
+import { levenshtein_distance } from './Levenshtein Distance.js';
 
 export interface IFuzzyMatchResult {
   distance: number;

@@ -1,5 +1,5 @@
-import { endpoints } from '../Array/Endpoints.mts';
-import { midpoint } from '../Math/Midpoint.mts';
+import { endpoints } from '../Array/Endpoints.js';
+import { midpoint } from '../Math/Midpoint.js';
 
 export function BinarySearch<T>(array: T[], target: T, isOrdered: (a: T, b: T) => boolean = (a: T, b: T) => a < b): number {
   let [begin, end] = endpoints(array);

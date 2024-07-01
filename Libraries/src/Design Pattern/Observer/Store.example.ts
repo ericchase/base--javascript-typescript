@@ -54,7 +54,9 @@ export class ComputedStore<SourceValue, ComputedValue> {
       });
     }
     this.subscriptionSet.add(callback);
-    callback(this.cachedValue);
+    if (this.cachedValue) {
+      callback(this.cachedValue);
+    }
     return () => {
       console.log('computed, unsubscribe');
       this.subscriptionSet.delete(callback);

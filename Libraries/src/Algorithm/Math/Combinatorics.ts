@@ -1,5 +1,10 @@
-import { Factorial } from './Factorial.mts';
+import { Factorial } from './Factorial.js';
 
+/**
+ * The npr formula is used to find the number of ways in which r different
+ * things can be selected and arranged out of n different things. This is also
+ * known as the permutations formula. The nPr formula is, P(n, r) = n! / (n−r)!.
+ */
 export function nPr(n: number, r: number): number {
   return Factorial(n) / Factorial(n - r);
 }

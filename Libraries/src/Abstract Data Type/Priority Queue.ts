@@ -1,4 +1,4 @@
-import { BinaryHeap, type IBinaryHeap } from '../Data Structure/Binary Heap.mts';
+import { BinaryHeap, type IBinaryHeap } from '../Data Structure/Binary Heap.js';
 
 export type IPriorityQueue<T> = IBinaryHeap<T>;
 

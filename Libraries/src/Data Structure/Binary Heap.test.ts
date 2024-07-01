@@ -1,5 +1,5 @@
-import { nChooseRPermutations } from '../Algorithm/Math/Combinatorics.mts';
-import { MaxBinaryHeap, MinBinaryHeap, type IBinaryHeap } from './Binary Heap.mts';
+import { nChooseRPermutations } from '../Algorithm/Math/Combinatorics.js';
+import { MaxBinaryHeap, MinBinaryHeap, type IBinaryHeap } from './Binary Heap.js';
 
 import { describe, expect, test } from 'bun:test';
 

@@ -1,4 +1,4 @@
-import { GenerateChunks } from './Chunk.mts';
+import { GenerateChunks } from './Chunk.js';
 
 import { describe, expect, test } from 'bun:test';
 
