@@ -13,6 +13,9 @@ export async function WriteFile(path: string, text: string) {
 }
 
 export async function CopyFile(path_src: string, path_dest: string, verify = true) {
+  if (path_src === path_dest) {
+    return false;
+  }
   const src = OpenFile(path_src);
   await Bun.write(path_dest, src);
   const dest = OpenFile(path_dest);

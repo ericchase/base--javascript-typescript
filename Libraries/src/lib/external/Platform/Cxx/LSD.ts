@@ -53,42 +53,47 @@ export async function IterateLSD(
 
 interface GetDirectoryListingOptions {
   path: string;
-  file_filters?: string[];
+  include?: string[];
+  exclude?: string[];
   ignore_paths?: string[];
 }
-export async function FilterDirectoryListing({ path, file_filters = [], ignore_paths = [] }: GetDirectoryListingOptions) {
+export async function FilterDirectoryListing(options: GetDirectoryListingOptions) {
   const directories: string[] = [];
   const files: string[] = [];
-  for (const entry of (await LSD({ path })).stdout?.split('\n') ?? []) {
+  for (const entry of (await LSD({ path: options.path })).stdout?.split('\n') ?? []) {
     if (entry.length > 0) {
       const entry_name = entry.slice(2);
       if (entry[0] === 'D') {
-        if (ignore_paths.length === 0 || !ignore_paths.some((ignore) => entry_name.includes(ignore))) {
+        if (options.ignore_paths?.length === 0 || !options.ignore_paths?.some((ignore) => entry_name.includes(ignore))) {
           directories.push(entry_name);
         }
       } else {
-        if (file_filters.length === 0 || file_filters.some((filter) => GlobSearch(entry_name, filter))) {
-          files.push(entry_name);
+        if (options.include?.length === 0 || options.include?.some((filter) => GlobSearch(entry_name, filter))) {
+          if (options.exclude?.length === 0 || !options.exclude?.some((filter) => GlobSearch(entry_name, filter))) {
+            files.push(entry_name);
+          }
         }
       }
     }
   }
   return { directories, files };
 }
-export async function FilterDirectoryTree({ path, file_filters = [], ignore_paths = [] }: GetDirectoryListingOptions) {
-  const directories: string[] = [path];
+export async function FilterDirectoryTree(options: GetDirectoryListingOptions) {
+  const directories: string[] = [options.path];
   const files: string[] = [];
   for (let i = 0; i < directories.length; i++) {
     for (const entry of (await LSD({ path: directories[i] })).stdout?.split('\n') ?? []) {
       if (entry.length > 0) {
         const entry_name = entry.slice(2);
         if (entry[0] === 'D') {
-          if (ignore_paths.length === 0 || !ignore_paths.some((ignore) => entry_name.includes(ignore))) {
+          if (options.ignore_paths?.length === 0 || !options.ignore_paths?.some((ignore) => entry_name.includes(ignore))) {
             directories.push(directories[i] + '/' + entry_name);
           }
         } else {
-          if (file_filters.length === 0 || file_filters.some((filter) => GlobSearch(entry_name, filter))) {
-            files.push(directories[i] + '/' + entry_name);
+          if (options.include?.length === 0 || options.include?.some((filter) => GlobSearch(entry_name, filter))) {
+            if (options.exclude?.length === 0 || !options.exclude?.some((filter) => GlobSearch(entry_name, filter))) {
+              files.push(directories[i] + '/' + entry_name);
+            }
           }
         }
       }
