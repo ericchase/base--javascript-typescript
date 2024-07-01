@@ -1,6 +1,6 @@
-import { CopyFile } from '../src/Platform/Bun/Fs.js';
-import { FilterDirectoryTree } from '../src/Platform/Cxx/LSD.js';
-import { DeleteFile } from '../src/Platform/Node/Fs.js';
+import { CopyFile } from '../lib/Platform/Bun/Fs.js';
+import { FilterDirectoryTree } from '../lib/Platform/Cxx/LSD.js';
+import { DeleteFile } from '../lib/Platform/Node/Fs.js';
 
 const src = {
   dir: './src',

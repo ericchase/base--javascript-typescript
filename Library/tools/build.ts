@@ -1,8 +1,8 @@
-import { OpenFile, ReadFile, WriteFile } from '../src/Platform/Bun/Fs.js';
-import { FilterDirectoryTree } from '../src/Platform/Cxx/LSD.js';
+import { OpenFile, ReadFile, WriteFile } from '../lib/Platform/Bun/Fs.js';
+import { FilterDirectoryTree } from '../lib/Platform/Cxx/LSD.js';
 
 const src = {
-  dir: './src',
+  dir: './lib',
   ext: '.ts',
   exclude: '.test.ts',
 };
