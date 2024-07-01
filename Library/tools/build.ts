@@ -1,5 +1,5 @@
-import { OpenFile, ReadFile, WriteFile } from '../lib/Platform/Bun/Fs.js';
-import { FilterDirectoryTree } from '../lib/Platform/Cxx/LSD.js';
+import { OpenFile, ReadFile, WriteFile } from '../src/lib/Platform/Bun/Fs.js';
+import { FilterDirectoryTree } from '../src/lib/Platform/Cxx/LSD.js';
 
 const src = {
   dir: './lib',
