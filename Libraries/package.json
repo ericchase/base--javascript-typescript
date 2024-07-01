@@ -1,7 +1,8 @@
 {
   "type": "module",
   "scripts": {
-    "build": "bun run ./tools/transpile.ts",
+    "build": "bun run ./tools/build.ts",
+    "dev": "bun run ./tools/watch-build.ts",
     "format-debug": "prettier . --debug-check",
     "format": "prettier . --write"
   },

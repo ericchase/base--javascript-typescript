@@ -26,6 +26,8 @@ dist-ssr
 # Other
 *.env
 *.exe
+*.mkv
+*.mp4
 build
 debug
 src-tauri/target
