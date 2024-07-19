@@ -85,14 +85,15 @@ export async function FilterDirectoryTree(options: GetDirectoryListingOptions) {
     for (const entry of (await LSD({ path: directories[i] })).stdout?.split('\n') ?? []) {
       if (entry.length > 0) {
         const entry_name = entry.slice(2);
+        const entry_path = directories[i] + '/' + entry_name;
         if (entry[0] === 'D') {
-          if (options.ignore_paths?.length === 0 || !options.ignore_paths?.some((ignore) => entry_name.includes(ignore))) {
-            directories.push(directories[i] + '/' + entry_name);
+          if (options.ignore_paths?.length === 0 || !options.ignore_paths?.some((ignore) => entry_path.includes(ignore))) {
+            directories.push(entry_path);
           }
         } else {
           if (options.include?.length === 0 || options.include?.some((filter) => GlobSearch(entry_name, filter))) {
             if (options.exclude?.length === 0 || !options.exclude?.some((filter) => GlobSearch(entry_name, filter))) {
-              files.push(directories[i] + '/' + entry_name);
+              files.push(entry_path);
             }
           }
         }
