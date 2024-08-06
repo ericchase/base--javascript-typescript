@@ -32,6 +32,8 @@ build
 debug
 src-tauri/target
 
+Experiments
+
 # Projects each have their own repository
 # Perhaps a list of projects and their repository links would be useful
 /Private-Projects/*
