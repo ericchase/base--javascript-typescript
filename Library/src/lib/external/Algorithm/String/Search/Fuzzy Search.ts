@@ -22,7 +22,11 @@ export class FuzzyMatcher {
     if (this.mapInputToTargetToDistance.has(input)) {
       const mapTargetToDistance = this.mapInputToTargetToDistance.get(input)!;
       if (!mapTargetToDistance.has(target)) {
-        mapTargetToDistance.set(target, levenshtein_distance(input, target));
+        if (input.length <= target.length) {
+          mapTargetToDistance.set(target, target.includes(input) ? 0 : levenshtein_distance(input, target));
+        } else {
+          mapTargetToDistance.set(target, input.includes(target) ? 0 : levenshtein_distance(target, input));
+        }
       }
     } else {
       this.mapInputToTargetToDistance.set(input, new Map<string, number>([[target, levenshtein_distance(input, target)]]));
@@ -88,13 +92,12 @@ export class FuzzyMatcher {
       }
     }
 
-    Array.from(targetWordSet)
+    Array.from(targetWordSet) //
       .flatMap((targetWord) => this.searchList(inputTextList, targetWord, tolerance))
       .forEach(addToMatchResultMap);
 
-    return Array.from(indexToMatchResultMap.values()).sort(
-      (a, b) => b.count / b.distance - a.count / a.distance || b.count - a.count || a.inputIndex - b.inputIndex,
-    );
+    return Array.from(indexToMatchResultMap.values()) //
+      .sort((a, b) => b.count / b.distance - a.count / a.distance || b.count - a.count || a.inputIndex - b.inputIndex);
   }
 }
 
@@ -119,4 +122,16 @@ export class TextProcessor {
     }
     return input;
   }
+}
+
+const textProcessor = new TextProcessor([(s) => s.toLocaleLowerCase()]);
+
+const fuzzyMatcher = new FuzzyMatcher();
+
+const targetText = 'scroll';
+const inputList = ['Shortcuts Manual', 'Back', 'Forward', 'Reload Tab', 'Hard Reload Tab', 'Next Page', 'Previous Page', 'Remove URL Params', 'Go Up', 'Go To Root', 'Focus Text Input', 'Focus Media Player', 'Blur Element', 'Copy URL', 'Copy Title', 'Copy Title and URL', 'Web Search for Selected Text', 'Scroll Down', 'Scroll Up', 'Scroll Left', 'Scroll Right', 'Scroll Page Down', 'Scroll Page Up', 'Scroll Half Page Down', 'Scroll Half Page Up', 'Scroll To Top', 'Scroll To Bottom', 'Zoom In', 'Zoom Out', 'Zoom Reset', 'Toggle Full Screen', 'New Tab', 'New Tab to the Right', 'New Window', 'New Incognito Window', 'Close Tab', 'Close Window', 'Restore Tab', 'Duplicate Tab', 'Pin/Unpin Tab', 'Group/Ungroup Tab', 'Collapse/Uncollapse Tab Groups', 'Mute/Unmute Tab', 'Discard Tab', 'Sort Tabs by URL', 'Group Tabs by Domain', 'Rename Tab Group', 'Next Tab Group Color', 'Previous Tab Group Color', 'Activate Audible Tab', 'Next Tab', 'Previous Tab', 'First Tab', 'Second Tab', 'Third Tab', 'Fourth Tab', 'Fifth Tab', 'Sixth Tab', 'Seventh Tab', 'Eighth Tab', 'Last Tab', 'Last Active Tab', 'Second Last Active Tab', 'Third Last Active Tab', 'Fourth Last Active Tab', 'Fifth Last Active Tab', 'Sixth Last Active Tab', 'Seventh Last Active Tab', 'Eighth Last Active Tab', 'Ninth Last Active Tab', 'Next Window', 'Previous Window', 'Grab Tab', 'Move Tab Left', 'Move Tab Right', 'Move Tab First', 'Move Tab Last', 'Move Tab New Window', 'Move Tab Previous Window', 'Select Active Tab', 'Select Previous Tab', 'Select Next Tab', 'Select Related Tabs', 'Select Tabs In Group', 'Select All Tabs', 'Select Tabs to the Right', 'Move Tab Selection Face Backward', 'Move Tab Selection Face Forward', 'Bookmark Tab', 'Bookmark Session', 'Read Later', 'Open Downloads Folder', 'History', 'Synced Tabs', 'Clear Browser Data', 'Downloads', 'Bookmarks', 'Settings', 'Passwords', 'Search Engines', 'Extensions', 'Extension Shortcuts', 'Experiments'];
+
+const results = fuzzyMatcher.searchList(textProcessor.run(inputList), textProcessor.run(targetText), 5);
+for (const { distance, inputIndex } of results) {
+  console.log(distance, inputList[inputIndex]);
 }
