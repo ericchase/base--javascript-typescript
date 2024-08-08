@@ -31,6 +31,7 @@ dist-ssr
 build
 debug
 src-tauri/target
+sync.ffs_db
 
 Experiments
 
