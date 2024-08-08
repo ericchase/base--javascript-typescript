@@ -1,7 +1,7 @@
 import { FilterDirectoryTree } from '../src/lib/external/Platform/Cxx/LSD.js';
 
 const { files } = await FilterDirectoryTree({
-  path: '.',
+  path: '.', //
   include: ['*.rs'],
   ignore_paths: ['/target/'],
 });

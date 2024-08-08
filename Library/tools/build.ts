@@ -12,7 +12,11 @@ const dest = {
   ext: '.js',
 };
 
-const { files } = await FilterDirectoryTree({ path: src.dir, include: ['*' + src.ext], exclude: ['*' + src.exclude] });
+const { files } = await FilterDirectoryTree({
+  path: src.dir, //
+  include: ['*' + src.ext],
+  exclude: ['*' + src.exclude],
+});
 
 const success: string[] = [];
 const failure: string[] = [];

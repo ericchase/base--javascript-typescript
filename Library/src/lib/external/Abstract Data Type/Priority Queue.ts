@@ -11,9 +11,7 @@ class Keyed<T> {
 
 export abstract class PriorityQueue<T> implements IPriorityQueue<T> {
   constructor(public isOrdered: (a: T, b: T) => boolean = (a: T, b: T) => a < b) {
-    this.queue = new BinaryHeap<Keyed<T>>(
-      (a: Keyed<T>, b: Keyed<T>) => this.isOrdered(a.data, b.data) || (!this.isOrdered(b.data, a.data) && a.key < b.key),
-    );
+    this.queue = new BinaryHeap<Keyed<T>>((a: Keyed<T>, b: Keyed<T>) => this.isOrdered(a.data, b.data) || (!this.isOrdered(b.data, a.data) && a.key < b.key));
   }
   get length(): number {
     return this.queue.length;

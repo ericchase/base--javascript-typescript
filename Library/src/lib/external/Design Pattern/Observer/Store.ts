@@ -1,9 +1,11 @@
 export type NotificationCallback<Value> = (value: Value) => void;
 export type UpdateCallback<Value> = (value: Value) => Value;
 
-// notifyOnce
-// false: notify subscribers each time set/update is called
-// true: notify subscribers only when the value changes
+/**
+ * notifyOnce
+ * - false: notify subscribers each time set/update is called
+ * - true: notify subscribers only when the value changes
+ */
 export class Store<Value> {
   protected currentValue: Value;
   protected subscriptionSet = new Set<NotificationCallback<Value>>();
