@@ -23,9 +23,9 @@ export class FuzzyMatcher {
       const mapTargetToDistance = this.mapInputToTargetToDistance.get(input)!;
       if (!mapTargetToDistance.has(target)) {
         if (input.length <= target.length) {
-          mapTargetToDistance.set(target, target.includes(input) ? 0 : levenshtein_distance(input, target));
+          mapTargetToDistance.set(target, target.startsWith(input) ? 0 : levenshtein_distance(input, target));
         } else {
-          mapTargetToDistance.set(target, input.includes(target) ? 0 : levenshtein_distance(target, input));
+          mapTargetToDistance.set(target, input.startsWith(target) ? 0 : levenshtein_distance(target, input));
         }
       }
     } else {
@@ -124,14 +124,35 @@ export class TextProcessor {
   }
 }
 
-const textProcessor = new TextProcessor([(s) => s.toLocaleLowerCase()]);
+// const candidates = ['Shortcuts Manual', 'Back', 'Forward', 'Reload Tab', 'Hard Reload Tab', 'Next Page', 'Previous Page', 'Remove URL Params', 'Go Up', 'Go To Root', 'Focus Text Input', 'Focus Media Player', 'Blur Element', 'Copy URL', 'Copy Title', 'Copy Title and URL', 'Web Search for Selected Text', 'Scroll Down', 'Scroll Up', 'Scroll Left', 'Scroll Right', 'Scroll Page Down', 'Scroll Page Up', 'Scroll Half Page Down', 'Scroll Half Page Up', 'Scroll To Top', 'Scroll To Bottom', 'Zoom In', 'Zoom Out', 'Zoom Reset', 'Toggle Full Screen', 'New Tab', 'New Tab to the Right', 'New Window', 'New Incognito Window', 'Close Tab', 'Close Window', 'Restore Tab', 'Duplicate Tab', 'Pin/Unpin Tab', 'Group/Ungroup Tab'];
+// const query = 'tab n';
 
-const fuzzyMatcher = new FuzzyMatcher();
+// const textProcessor = new TextProcessor([
+//   (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, ''), //
+//   (s) => s.toLocaleLowerCase(),
+// ]);
+// const fuzzyMatcher = new FuzzyMatcher();
+// const heatMap = new Map<string, { hits: number; distance: number; score: number }>();
+// for (const targetWord of query.split(' ')) {
+//   const results = fuzzyMatcher.searchList(textProcessor.run(candidates), textProcessor.run(targetWord), 2);
+//   for (const { distance, inputIndex } of results) {
+//     const cached = heatMap.get(candidates[inputIndex]) ?? { hits: 0, distance: 0, score: 0 };
+//     cached.hits += 1;
+//     cached.distance += distance;
+//     cached.score = cached.hits > cached.distance ? cached.hits : cached.hits / cached.distance;
+//     heatMap.set(candidates[inputIndex], cached);
+//   }
+// }
 
-const targetText = 'scroll';
-const inputList = ['Shortcuts Manual', 'Back', 'Forward', 'Reload Tab', 'Hard Reload Tab', 'Next Page', 'Previous Page', 'Remove URL Params', 'Go Up', 'Go To Root', 'Focus Text Input', 'Focus Media Player', 'Blur Element', 'Copy URL', 'Copy Title', 'Copy Title and URL', 'Web Search for Selected Text', 'Scroll Down', 'Scroll Up', 'Scroll Left', 'Scroll Right', 'Scroll Page Down', 'Scroll Page Up', 'Scroll Half Page Down', 'Scroll Half Page Up', 'Scroll To Top', 'Scroll To Bottom', 'Zoom In', 'Zoom Out', 'Zoom Reset', 'Toggle Full Screen', 'New Tab', 'New Tab to the Right', 'New Window', 'New Incognito Window', 'Close Tab', 'Close Window', 'Restore Tab', 'Duplicate Tab', 'Pin/Unpin Tab', 'Group/Ungroup Tab', 'Collapse/Uncollapse Tab Groups', 'Mute/Unmute Tab', 'Discard Tab', 'Sort Tabs by URL', 'Group Tabs by Domain', 'Rename Tab Group', 'Next Tab Group Color', 'Previous Tab Group Color', 'Activate Audible Tab', 'Next Tab', 'Previous Tab', 'First Tab', 'Second Tab', 'Third Tab', 'Fourth Tab', 'Fifth Tab', 'Sixth Tab', 'Seventh Tab', 'Eighth Tab', 'Last Tab', 'Last Active Tab', 'Second Last Active Tab', 'Third Last Active Tab', 'Fourth Last Active Tab', 'Fifth Last Active Tab', 'Sixth Last Active Tab', 'Seventh Last Active Tab', 'Eighth Last Active Tab', 'Ninth Last Active Tab', 'Next Window', 'Previous Window', 'Grab Tab', 'Move Tab Left', 'Move Tab Right', 'Move Tab First', 'Move Tab Last', 'Move Tab New Window', 'Move Tab Previous Window', 'Select Active Tab', 'Select Previous Tab', 'Select Next Tab', 'Select Related Tabs', 'Select Tabs In Group', 'Select All Tabs', 'Select Tabs to the Right', 'Move Tab Selection Face Backward', 'Move Tab Selection Face Forward', 'Bookmark Tab', 'Bookmark Session', 'Read Later', 'Open Downloads Folder', 'History', 'Synced Tabs', 'Clear Browser Data', 'Downloads', 'Bookmarks', 'Settings', 'Passwords', 'Search Engines', 'Extensions', 'Extension Shortcuts', 'Experiments'];
-
-const results = fuzzyMatcher.searchList(textProcessor.run(inputList), textProcessor.run(targetText), 5);
-for (const { distance, inputIndex } of results) {
-  console.log(distance, inputList[inputIndex]);
-}
+// // sort and print results
+// for (const result of [...heatMap.entries()].sort((a, b) => {
+//   return b[1].score - a[1].score;
+//   // if (a.distance < a.hits) {
+//   // }
+//   // if (a.distance === b.distance) {
+//   //   return b[1][0] - a[1][0];
+//   // }
+//   // return b[1][1] - a[1][1];
+// })) {
+//   console.log(...result);
+// }
