@@ -1,5 +1,6 @@
 import { OpenFile, ReadFile, WriteFile } from '../src/lib/external/Platform/Bun/Fs.js';
 import { FilterDirectoryTree } from '../src/lib/external/Platform/Cxx/LSD.js';
+import { Run } from '../src/lib/external/Platform/Node/Process.js';
 
 const src = {
   dir: './src',
@@ -46,3 +47,5 @@ if (failure.length > 0) {
     console.log('\x1b[31mfail\x1b[0m', path);
   }
 }
+
+Run({ program: 'bun', args: ['run', 'format'] });
