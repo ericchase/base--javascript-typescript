@@ -60,10 +60,12 @@ export class ElementAddedObserver {
   protected matchSet = new Set<Element>();
   protected subscriptionSet = new Set<NotificationCallback<Element>>();
   private send(element: Element) {
-    this.matchSet.add(element);
-    for (const callback of this.subscriptionSet) {
-      if (callback(element)?.abort === true) {
-        this.subscriptionSet.delete(callback);
+    if (!this.matchSet.has(element)) {
+      this.matchSet.add(element);
+      for (const callback of this.subscriptionSet) {
+        if (callback(element)?.abort === true) {
+          this.subscriptionSet.delete(callback);
+        }
       }
     }
   }
