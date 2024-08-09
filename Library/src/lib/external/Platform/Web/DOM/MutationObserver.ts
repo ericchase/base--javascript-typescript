@@ -95,5 +95,3 @@ export class ElementAddedObserver {
     `);
   }
 }
-
-ElementAddedObserver.Help();
