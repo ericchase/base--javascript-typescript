@@ -2,6 +2,8 @@ import { OpenFile, ReadFile, WriteFile } from '../src/lib/external/Platform/Bun/
 import { FilterDirectoryTree } from '../src/lib/external/Platform/Cxx/LSD.js';
 import { Run } from '../src/lib/external/Platform/Node/Process.js';
 
+Run({ program: 'bun', args: ['run', 'format'] });
+
 const src = {
   dir: './src',
   ext: '.ts',
