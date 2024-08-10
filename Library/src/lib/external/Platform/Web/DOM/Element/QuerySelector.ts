@@ -15,3 +15,5 @@ export function $<K extends keyof HTMLElementTagNameMap | keyof SVGElementTagNam
   }
   throw `Query: \`${selector}\`. Element not of type: \`${tagName}\`. ${element}`;
 }
+
+export const QuerySelector = $;

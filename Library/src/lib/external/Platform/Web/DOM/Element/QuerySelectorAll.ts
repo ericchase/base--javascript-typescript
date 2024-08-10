@@ -23,3 +23,5 @@ export function $$<K extends keyof HTMLElementTagNameMap | keyof SVGElementTagNa
   }
   return elements;
 }
+
+export const QuerySelectorAll = $$;
