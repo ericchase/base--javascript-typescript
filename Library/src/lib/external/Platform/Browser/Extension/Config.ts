@@ -1,8 +1,10 @@
 import { ReadFile, WriteFile } from '../../Node/Fs.js';
 
+export type POJO = Record<string, any>;
+
 export class Config {
-  constructor(public pojo: Record<string, any>) {}
-  get(this: Config, key: string) {
+  constructor(public pojo: POJO) {}
+  get(this: Config, key: string): unknown {
     return this.pojo[key];
   }
   set(this: Config, key: string, value: any) {
@@ -38,10 +40,6 @@ export class Config {
 
   static async readConfig(path: string) {
     return new Config(JSON.parse(await ReadFile(path)));
-  }
-
-  static async extractSubConfig(config: Config, key: string) {
-    return new Config(config.get(key));
   }
 }
 
