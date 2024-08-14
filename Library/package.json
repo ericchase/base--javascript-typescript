@@ -1,8 +1,8 @@
 {
   "type": "module",
   "scripts": {
-    "build": "bun run ./tools/build.ts",
-    "dev": "bun run ./tools/dev.ts",
+    "build": "bun ./tools/build.ts",
+    "dev": "bun ./tools/dev.ts",
     "format-debug": "prettier . --debug-check",
     "format": "prettier . --write"
   },
@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@types/bun": "^1.1.6",
-    "@types/node": "^20.14.14",
+    "@types/node": "^20.14.15",
     "prettier": "^3.3.3"
   }
 }
