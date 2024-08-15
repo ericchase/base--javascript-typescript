@@ -13,16 +13,24 @@ interface RunParams {
 }
 export function Run({ program, args = [], options = {} }: RunParams) {
   return new Promise<STDIO>((resolve, reject) => {
-    console.log(`[${new Date().toLocaleTimeString()}] > ${program} ${args.join(' ')}`);
-    node_child_process.execFile(program, args, options, (error, stdout, stderr) => {
-      if (error) return reject(error);
-      return resolve({ stdout, stderr });
-    });
+    try {
+      console.log(`[${new Date().toLocaleTimeString()}] > ${program} ${args.join(' ')}`);
+      node_child_process.execFile(program, args, options, (error, stdout, stderr) => {
+        if (error) return reject(error);
+        return resolve({ stdout, stderr });
+      });
+    } catch (err) {
+      return reject(err);
+    }
   });
 }
 
 export async function PipeStdio(command: Promise<STDIO>) {
-  const { stdout, stderr } = await command;
-  if (stdout) console.log(stdout.slice(0, stdout.lastIndexOf('\n')));
-  if (stderr) console.log(stderr.slice(0, stderr.lastIndexOf('\n')));
+  try {
+    const { stdout, stderr } = await command;
+    if (stdout) console.log(stdout.slice(0, stdout.lastIndexOf('\n')));
+    if (stderr) console.log(stderr.slice(0, stderr.lastIndexOf('\n')));
+  } catch (err) {
+    console.log(err);
+  }
 }
