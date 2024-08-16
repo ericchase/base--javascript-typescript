@@ -1,8 +1,8 @@
-import { OpenFile, ReadFile, WriteFile } from '../src/lib/external/Platform/Bun/Fs.js';
-import { FilterDirectoryTree } from '../src/lib/external/Platform/Cxx/LSD.js';
-import { Run } from '../src/lib/external/Platform/Node/Process.js';
+import { FilterDirectoryTree } from '../src/Platform/Cxx/LSD.js';
+import { DeleteDirectory } from '../src/Platform/Node/Fs.js';
 
-Run({ program: 'bun', args: ['run', 'format'] });
+await DeleteDirectory('./build');
+Bun.spawnSync(['bun', 'run', 'format']);
 
 const src = {
   dir: './src',
@@ -30,9 +30,9 @@ const transpiler = new Bun.Transpiler({
 });
 for (const path of files) {
   const out_path = dest.dir + path.slice(src.dir.length, path.lastIndexOf(src.ext)) + dest.ext;
-  const transpiled_code = transpiler.transformSync(await ReadFile(OpenFile(path)));
+  const transpiled_code = transpiler.transformSync(await Bun.file(path).text());
   try {
-    await WriteFile(out_path, transpiled_code);
+    await Bun.write(out_path, transpiled_code);
     success.push(out_path);
   } catch (err) {
     failure.push(path);
@@ -50,4 +50,4 @@ if (failure.length > 0) {
   }
 }
 
-Run({ program: 'bun', args: ['run', 'format'] });
+Bun.spawnSync(['bun', 'run', 'format']);

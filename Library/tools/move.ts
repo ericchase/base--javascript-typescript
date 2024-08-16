@@ -1,6 +1,6 @@
-import { CopyFile } from '../src/lib/external/Platform/Bun/Fs.js';
-import { FilterDirectoryTree } from '../src/lib/external/Platform/Cxx/LSD.js';
-import { DeleteFile } from '../src/lib/external/Platform/Node/Fs.js';
+import { CopyFile } from '../src/Platform/Bun/Fs.js';
+import { FilterDirectoryTree } from '../src/Platform/Cxx/LSD.js';
+import { DeleteFile } from '../src/Platform/Node/Fs.js';
 
 const src = {
   dir: './src',
@@ -22,17 +22,17 @@ const { files } = await FilterDirectoryTree({
 const success: string[] = [];
 const failure: string[] = [];
 
-for (const path of files) {
-  const out_path = dest.dir + path.slice(src.dir.length, path.lastIndexOf(src.ext)) + dest.ext;
+for (const from of files) {
+  const to = dest.dir + from.slice(src.dir.length, from.lastIndexOf(src.ext)) + dest.ext;
   try {
-    if (await CopyFile(path, out_path)) {
-      await DeleteFile(path);
-      success.push(path);
+    if (await CopyFile({ from, to })) {
+      await DeleteFile(from);
+      success.push(from);
     } else {
-      failure.push(path);
+      failure.push(from);
     }
   } catch (err) {
-    failure.push(path);
+    failure.push(from);
   }
 }
 

@@ -1,4 +1,4 @@
-import { FilterDirectoryTree } from '../src/lib/external/Platform/Cxx/LSD.js';
+import { FilterDirectoryTree } from '../src/Platform/Cxx/LSD.js';
 
 const { files } = await FilterDirectoryTree({
   path: '.', //

@@ -1,7 +1,7 @@
 // does exactly what the name sounds like
 
-import { FilterDirectoryTree } from '../src/lib/external/Platform/Cxx/LSD.js';
-import { Run } from '../src/lib/external/Platform/Node/Process.js';
+import { FilterDirectoryTree } from '../src/Platform/Cxx/LSD.js';
+import { Run } from '../src/Platform/Node/Process.js';
 
 const src = {
   dir: './src',

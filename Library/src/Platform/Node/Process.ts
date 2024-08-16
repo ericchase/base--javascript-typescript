@@ -1,21 +1,20 @@
-import node_child_process, { type ExecFileOptions } from 'node:child_process';
-import type { ObjectEncodingOptions } from 'node:fs';
+import { execFile } from 'node:child_process';
 
 export interface STDIO {
-  stdout?: string;
-  stderr?: string;
+  stdout?: string | Buffer;
+  stderr?: string | Buffer;
 }
 
 interface RunParams {
   program: string;
   args?: string[];
-  options?: ObjectEncodingOptions & ExecFileOptions;
+  options?: Parameters<typeof execFile>[2];
 }
 export function Run({ program, args = [], options = {} }: RunParams) {
   return new Promise<STDIO>((resolve, reject) => {
     try {
       console.log(`[${new Date().toLocaleTimeString()}] > ${program} ${args.join(' ')}`);
-      node_child_process.execFile(program, args, options, (error, stdout, stderr) => {
+      execFile(program, args, options, (error, stdout, stderr) => {
         if (error) return reject(error);
         return resolve({ stdout, stderr });
       });
