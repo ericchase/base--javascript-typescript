@@ -1,12 +1,12 @@
 const EMPTY_UI8A = new Uint8Array();
 
-class StreamReaderIterator {
+export class U8StreamReader {
   done = false;
   i = 0;
   length = 0;
   value: Uint8Array = EMPTY_UI8A;
   constructor(public reader: ReadableStreamDefaultReader<Uint8Array>) {}
-  async next(this: StreamReaderIterator) {
+  async next(this: U8StreamReader) {
     const { done, value = EMPTY_UI8A } = await this.reader.read();
     if (this.done === done && this.value === value) {
       return { changed: false };
@@ -19,9 +19,9 @@ class StreamReaderIterator {
   }
 }
 
-export async function CompareStreams(stream1: ReadableStream<Uint8Array>, stream2: ReadableStream<Uint8Array>) {
-  const one = new StreamReaderIterator(stream1.getReader());
-  const two = new StreamReaderIterator(stream2.getReader());
+export async function U8StreamCompare(stream1: ReadableStream<Uint8Array>, stream2: ReadableStream<Uint8Array>) {
+  const one = new U8StreamReader(stream1.getReader());
+  const two = new U8StreamReader(stream2.getReader());
 
   while (true) {
     let changed = false;

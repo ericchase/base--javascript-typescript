@@ -1,5 +1,5 @@
 import type { BunFile } from 'bun';
-import { CompareStreams } from '../../Algorithm/Stream/Compare.js';
+import { U8StreamCompare } from '../../Algorithm/Stream/Compare.js';
 
 export async function CopyFile({ from, to, verify = true }: { from: string; to: string; verify?: boolean }) {
   if (from === to) {
@@ -15,8 +15,8 @@ export async function CopyFile({ from, to, verify = true }: { from: string; to: 
 }
 
 export function CompareFiles(a: BunFile, b: BunFile) {
-  return CompareStreams(a.stream(), b.stream());
+  return U8StreamCompare(a.stream(), b.stream());
 }
 export function ComparePaths(a: string | URL, b: string | URL) {
-  return CompareStreams(Bun.file(a).stream(), Bun.file(b).stream());
+  return U8StreamCompare(Bun.file(a).stream(), Bun.file(b).stream());
 }
