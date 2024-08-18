@@ -4,23 +4,26 @@ export class ElementAddedObserver {
   constructor({ source = document.documentElement, options = { subtree: true }, selector, includeExistingElements = true }: { source?: Node & { querySelectorAll?: Function }; options?: { subtree?: boolean }; selector: string; includeExistingElements?: boolean }) {
     this.mutationObserver = new MutationObserver((mutationRecords: MutationRecord[]) => {
       for (const record of mutationRecords) {
+        if (record.target instanceof Element && record.target.matches(selector)) {
+          this.send(record.target);
+        }
         const treeWalker = document.createTreeWalker(record.target, NodeFilter.SHOW_ELEMENT);
-        do {
+        while (treeWalker.nextNode()) {
           if ((treeWalker.currentNode as Element).matches(selector)) {
             this.send(treeWalker.currentNode as Element);
           }
-        } while (treeWalker.nextNode());
+        }
       }
     });
     this.mutationObserver.observe(source, { childList: true, subtree: options.subtree ?? true });
 
     if (includeExistingElements === true) {
       const treeWalker = document.createTreeWalker(document, NodeFilter.SHOW_ELEMENT);
-      do {
+      while (treeWalker.nextNode()) {
         if ((treeWalker.currentNode as Element).matches(selector)) {
           this.send(treeWalker.currentNode as Element);
         }
-      } while (treeWalker.nextNode());
+      }
     }
   }
   public disconnect() {
