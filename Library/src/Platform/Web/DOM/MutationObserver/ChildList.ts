@@ -1,7 +1,7 @@
 type NotificationCallback = (record: MutationRecord) => { abort: boolean } | void;
 
 export class ChildListObserver {
-  constructor({ source = document.documentElement, options = { characterDataOldValue: true, subtree: true } }: { source?: Node; options?: { characterDataOldValue?: boolean; subtree?: boolean } }) {
+  constructor({ source = document.documentElement, options = { subtree: true } }: { source?: Node; options?: { subtree?: boolean } }) {
     this.mutationObserver = new MutationObserver((mutationRecords: MutationRecord[]) => {
       for (const record of mutationRecords) {
         this.send(record);
