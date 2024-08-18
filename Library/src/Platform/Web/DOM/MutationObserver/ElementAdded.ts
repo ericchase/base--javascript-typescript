@@ -44,6 +44,12 @@ export class ElementAddedObserver {
       }
     }
   }
+  public disconnect() {
+    this.mutationObserver.disconnect();
+    for (const callback of this.subscriptionSet) {
+      this.subscriptionSet.delete(callback);
+    }
+  }
   public subscribe(callback: NotificationCallback<Element>): () => void {
     this.subscriptionSet.add(callback);
     for (const element of this.matchSet) {

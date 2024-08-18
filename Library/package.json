@@ -11,7 +11,8 @@
   },
   "devDependencies": {
     "@types/bun": "^1.1.6",
-    "@types/node": "^20.14.15",
+    "@types/chrome": "^0.0.270",
+    "@types/node": "^20.15.0",
     "prettier": "^3.3.3"
   }
 }
