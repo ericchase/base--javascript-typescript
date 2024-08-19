@@ -1,4 +1,4 @@
-type NotificationCallback<Result, Tag> = (result?: Result, error?: Error, tag?: Tag) => { abort: boolean } | void;
+export type SubscriptionCallback<Result, Tag> = (result?: Result, error?: Error, tag?: Tag) => { abort: boolean } | void;
 
 export class JobQueue<Result = void, Tag = void> {
   constructor(public delay_ms: number) {}
@@ -12,7 +12,7 @@ export class JobQueue<Result = void, Tag = void> {
   public get done() {
     return this.completionCount === this.queue.length ? true : false;
   }
-  public subscribe(callback: NotificationCallback<Result, Tag>): () => void {
+  public subscribe(callback: SubscriptionCallback<Result, Tag>): () => void {
     this.subscriptionSet.add(callback);
     for (const result of this.results) {
       if (callback(result.value, result.error)?.abort === true) {
@@ -29,7 +29,7 @@ export class JobQueue<Result = void, Tag = void> {
   protected completionCount = 0;
   protected results: { value?: Result; error?: Error }[] = [];
   protected running = false;
-  protected subscriptionSet = new Set<NotificationCallback<Result, Tag>>();
+  protected subscriptionSet = new Set<SubscriptionCallback<Result, Tag>>();
   protected run() {
     if (this.queueIndex < this.queue.length) {
       const { fn, tag } = this.queue[this.queueIndex++];

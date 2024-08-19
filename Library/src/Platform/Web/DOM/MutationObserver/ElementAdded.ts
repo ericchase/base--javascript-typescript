@@ -1,4 +1,4 @@
-type NotificationCallback = (element: Element) => { abort: boolean } | void;
+export type SubscriptionCallback = (element: Element) => { abort: boolean } | void;
 
 export class ElementAddedObserver {
   constructor({ source = document.documentElement, options = { subtree: true }, selector, includeExistingElements = true }: { source?: Node & { querySelectorAll?: Function }; options?: { subtree?: boolean }; selector: string; includeExistingElements?: boolean }) {
@@ -32,7 +32,7 @@ export class ElementAddedObserver {
       this.subscriptionSet.delete(callback);
     }
   }
-  public subscribe(callback: NotificationCallback): () => void {
+  public subscribe(callback: SubscriptionCallback): () => void {
     this.subscriptionSet.add(callback);
     for (const element of this.matchSet) {
       if (callback(element)?.abort === true) {
@@ -46,7 +46,7 @@ export class ElementAddedObserver {
   }
   protected mutationObserver: MutationObserver;
   protected matchSet = new Set<Element>();
-  protected subscriptionSet = new Set<NotificationCallback>();
+  protected subscriptionSet = new Set<SubscriptionCallback>();
   private send(element: Element) {
     if (!this.matchSet.has(element)) {
       this.matchSet.add(element);

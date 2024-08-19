@@ -1,4 +1,4 @@
-type NotificationCallback = () => { abort: boolean } | void;
+export type SubscriptionCallback = () => { abort: boolean } | void;
 
 export interface WebRequest {
   bodyDetails?: chrome.webRequest.WebRequestBodyDetails;
@@ -29,8 +29,8 @@ export class WebRequestCache {
     }
     this.Notify();
   }
-  static SubscriptionSet = new Set<NotificationCallback>();
-  static Subscribe(callback: NotificationCallback): () => void {
+  static SubscriptionSet = new Set<SubscriptionCallback>();
+  static Subscribe(callback: SubscriptionCallback): () => void {
     this.SubscriptionSet.add(callback);
     if (callback()?.abort === true) {
       this.SubscriptionSet.delete(callback);
@@ -79,8 +79,18 @@ export async function RebuildAndSendRequest(webRequest: WebRequest) {
   }
 }
 
-export async function AnalyzeResponseBody(response: Response) {
-  const clone = response.clone();
+export async function AnalyzeRequestBody(req: Request) {
+  const clone = req.clone();
+  try {
+    return { type: 'json', data: await clone.json() };
+  } catch (_) {}
+  try {
+    return { type: 'text', data: await clone.text() };
+  } catch (_) {}
+  return { type: undefined, data: undefined };
+}
+export async function AnalyzeResponseBody(res: Response) {
+  const clone = res.clone();
   try {
     return { type: 'json', data: await clone.json() };
   } catch (_) {}
