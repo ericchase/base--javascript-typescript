@@ -1,6 +1,6 @@
 import node_child_process from 'node:child_process';
 
-interface WatchParams {
+export interface WatchParams {
   path: string;
   debounce_interval: number;
   change_cb: (changes: string[]) => void;

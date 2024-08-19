@@ -21,7 +21,9 @@ export class Broadcast<Value> {
   }
   send(value: Value) {
     for (const callback of this.subscriptionSet) {
-      callback(value);
+      if (callback(value)?.abort === true) {
+        this.subscriptionSet.delete(callback);
+      }
     }
   }
   sendAndWait(value: Value, untilValue: Value) {
