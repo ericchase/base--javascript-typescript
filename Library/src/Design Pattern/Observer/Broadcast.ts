@@ -1,4 +1,4 @@
-export type SubscriptionCallback<Value> = (value: Value) => { abort: boolean } | void;
+export type SubscriptionCallback<Value> = (value: Value, unsubscribe: () => void) => void;
 
 export class Broadcast<Value> {
   protected subscriptionSet = new Set<SubscriptionCallback<Value>>();
@@ -12,8 +12,8 @@ export class Broadcast<Value> {
     return new Promise<void>((resolve) => {
       const once = (value: Value) => {
         if (value === untilValue) {
-          resolve();
           this.subscriptionSet.delete(once);
+          resolve();
         }
       };
       this.subscriptionSet.add(once);
@@ -21,9 +21,9 @@ export class Broadcast<Value> {
   }
   send(value: Value) {
     for (const callback of this.subscriptionSet) {
-      if (callback(value)?.abort === true) {
+      callback(value, () => {
         this.subscriptionSet.delete(callback);
-      }
+      });
     }
   }
   sendAndWait(value: Value, untilValue: Value) {
