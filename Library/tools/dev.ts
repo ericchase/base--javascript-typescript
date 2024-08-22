@@ -17,6 +17,6 @@ try {
       console.error('\x1b[31mfail\x1b[0m', 'ERROR', error);
     },
   });
-} catch (err) {
-  console.log(err);
+} catch (error) {
+  console.log(error);
 }

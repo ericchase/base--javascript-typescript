@@ -4,7 +4,7 @@ import node_path from 'node:path';
 export async function DeleteFile(path: string) {
   try {
     await node_fs.unlink(path);
-  } catch (err) {}
+  } catch (error) {}
 }
 
 export async function ReadFile(path: string) {

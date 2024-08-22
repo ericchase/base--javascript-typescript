@@ -31,7 +31,7 @@ for (const from of files) {
     } else {
       failure.push(from);
     }
-  } catch (err) {
+  } catch (error) {
     failure.push(from);
   }
 }

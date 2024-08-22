@@ -34,7 +34,7 @@ for (const path of files) {
   try {
     await Bun.write(out_path, transpiled_code);
     success.push(out_path);
-  } catch (err) {
+  } catch (error) {
     failure.push(path);
   }
 }

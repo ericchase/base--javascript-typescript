@@ -18,8 +18,8 @@ export function Run({ program, args = [], options = {} }: RunParams) {
         if (error) return reject(error);
         return resolve({ stdout, stderr });
       });
-    } catch (err) {
-      return reject(err);
+    } catch (error) {
+      return reject(error);
     }
   });
 }
@@ -29,7 +29,7 @@ export async function PipeStdio(command: Promise<STDIO>) {
     const { stdout, stderr } = await command;
     if (stdout) console.log(stdout.slice(0, stdout.lastIndexOf('\n')));
     if (stderr) console.log(stderr.slice(0, stderr.lastIndexOf('\n')));
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
   }
 }

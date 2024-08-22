@@ -79,23 +79,24 @@ export async function RebuildAndSendRequest(webRequest: WebRequest) {
   }
 }
 
-export async function AnalyzeRequestBody(req: Request) {
-  const clone = req.clone();
+export async function AnalyzeBody(req: Request | Response) {
+  const data: {
+    blob?: Blob;
+    form?: FormData;
+    json?: any;
+    text?: string;
+  } = {};
   try {
-    return { type: 'json', data: await clone.json() };
+    data.form = await req.formData();
   } catch (_) {}
   try {
-    return { type: 'text', data: await clone.text() };
-  } catch (_) {}
-  return { type: undefined, data: undefined };
-}
-export async function AnalyzeResponseBody(res: Response) {
-  const clone = res.clone();
-  try {
-    return { type: 'json', data: await clone.json() };
+    data.json = await req.json();
   } catch (_) {}
   try {
-    return { type: 'text', data: await clone.text() };
+    data.text = await req.text();
   } catch (_) {}
-  return { type: undefined, data: undefined };
+  try {
+    data.blob = await req.blob();
+  } catch (_) {}
+  return data;
 }
