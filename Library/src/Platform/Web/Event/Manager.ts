@@ -1,4 +1,4 @@
-type ListenerCallback = (type: string, event: Event, options: EventOptions) => { remove: boolean } | void;
+type ListenerCallback = (event: Event & { options: EventOptions }, remove: () => void) => void;
 interface EventOptions {
   direction?: 'bubble' | 'capture';
   once?: boolean;
@@ -29,20 +29,18 @@ class ECEventManager {
    * @parameter options: if `{}`, `[]`, or undefined, the default event options `{ direction: 'bubble', once: false, passive: false }` will be used for each event listener created.
    * @returns a function for removing the event listeners created with this specific call to the `add` method. Event listeners associated with the combination of properties passed to `removeParams` will be removed. Passing `[]` to a property of `removeParams` will remove all the listeners associated with that specific property in combination with the other properties. Ultimately, passing `[]` to all properties (or leaving `removeParams` undefined) will remove every listener associated with this call.
    */
-  add(addParams: {
-    types: string | string[];
-    sources: EventSource | EventSource[];
-    callbacks: ListenerCallback | ListenerCallback[]; //
-    options?: EventOptions | EventOptions[];
-  }) {
+  add(
+    types: string | string[], //
+    sources: EventSource | EventSource[],
+    callbacks: ListenerCallback | ListenerCallback[],
+    options: EventOptions | EventOptions[] = { direction: 'bubble', once: false, passive: false },
+  ) {
     // TODO
     return {
       remove: (
-        removeParams: {
-          types: string | string[];
-          sources: EventSource | EventSource[];
-          options?: EventOptions | EventOptions[];
-        } = { types: [], sources: [], options: [] },
+        types: string | string[] = [], //
+        sources: EventSource | EventSource[] = [],
+        options: EventOptions | EventOptions[] = [],
       ) => {
         // TODO
       },
@@ -54,7 +52,7 @@ class ECEventManager {
   refresh(
     types: string | string[], //
     sources: EventSource | EventSource[],
-    options: EventOptions | EventOptions[] = {},
+    options: EventOptions | EventOptions[] = [],
   ) {
     // TODO
   }
