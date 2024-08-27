@@ -1,27 +1,42 @@
-type ListenerCallback = (event: Event & { options: EventOptions }, remove: () => void) => void;
-interface EventOptions {
-  direction?: 'bubble' | 'capture';
-  once?: boolean;
-  passive?: boolean;
-}
+type ListenerCallback = (event: Event & { options: EventOption }, remove: () => void) => void;
+
+// interface EventOptions {
+//   direction?: 'bubble' | 'capture';
+//   once?: boolean;
+//   passive?: boolean;
+// }
+
+type EventOption = 'bubble' | 'capture' | 'once' | 'passive';
+
 interface EventSource {
   addEventListener: (type: any, listener: (event: any) => any, useCapture: any) => void;
   removeEventListener: (type: any, listener: (event: any) => any, useCapture: any) => void;
 }
 
-class ECEventManager {
+type N<T> = T | T[];
+
+class EventGroup {
+  add(types: N<string>, callbacks: N<ListenerCallback>, options?: N<EventOption>) {}
+  clear() {}
+  refresh() {}
+  remove() {}
+}
+
+class GlobalEventManager {
   /** The EventManager is intended to be a global object (typically 'window' for browsers) used between multiple scripts. There may or may not be different major versions of this class. The static GetGlobalManager function will retrieve the global object satisfying this class' major version. If an appropriate object does not exist, a new one will be created. */
-  static GetGlobalManager() {
-    const _ = (window as any).ECEventManager1 as ECEventManager;
-    if (_ !== null && _ !== undefined && typeof _ === 'object' && typeof _.add == 'function' && typeof _.refresh == 'function' && _.version === ECEventManager.Version) {
+  static GetGlobalInstance() {
+    const _ = (window as any).ECEventManager1 as GlobalEventManager;
+    if (_ !== null && _ !== undefined && typeof _ === 'object' && typeof _.add == 'function' && typeof _.refresh == 'function' && _.version === GlobalEventManager.Version) {
       return _;
     }
-    return ((window as any).ECEventManager1 = new ECEventManager());
+    return ((window as any).ECEventManager1 = new GlobalEventManager());
   }
-  static Version = 'github.com/ericchase|EventManager(v1)';
+  static Version = 'github.com/ericchase|EventManager(v0)';
 
   eventListenerMap = new Map<ListenerCallback, {}>();
-  version = ECEventManager.Version;
+  version = GlobalEventManager.Version;
+
+  new(sources: EventSource | EventSource[]): EventGroup {}
 
   /**
    * Create one or more event listeners for each event type in `types`, for each event source in `sources`, for each listener callback in `callbacks`, and for each event options in `options`. (Passing multiple values to any parameter will result in the creation of multiple event listeners.)
@@ -33,14 +48,14 @@ class ECEventManager {
     types: string | string[], //
     sources: EventSource | EventSource[],
     callbacks: ListenerCallback | ListenerCallback[],
-    options: EventOptions | EventOptions[] = { direction: 'bubble', once: false, passive: false },
+    options: EventOption | EventOption[] = { direction: 'bubble', once: false, passive: false },
   ) {
     // TODO
     return {
       remove: (
         types: string | string[] = [], //
         sources: EventSource | EventSource[] = [],
-        options: EventOptions | EventOptions[] = [],
+        options: EventOption | EventOption[] = [],
       ) => {
         // TODO
       },
@@ -52,10 +67,10 @@ class ECEventManager {
   refresh(
     types: string | string[], //
     sources: EventSource | EventSource[],
-    options: EventOptions | EventOptions[] = [],
+    options: EventOption | EventOption[] = [],
   ) {
     // TODO
   }
 }
 
-export const EventManager = ECEventManager.GetGlobalManager();
+export const EventManager = GlobalEventManager.GetGlobalInstance();
