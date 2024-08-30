@@ -36,6 +36,6 @@ Experiments
 # Projects each have their own repository
 # Perhaps a list of projects and their repository links would be useful
 /Private-Projects/*
-!/Private-Projects/Readme.md
+!/Private-Projects/README.md
 /Projects/*
-!/Projects/Readme.md
+!/Projects/README.md
