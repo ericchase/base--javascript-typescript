@@ -1,11 +1,12 @@
 //! use Bun.HTMLRewriter instead
 import * as Parser from 'node-html-parser';
 import node_fs from 'node:fs/promises';
+import { ParseHTML } from './ParseHTML.js';
 
 export async function LoadHtmlFile(filePath: string) {
   try {
     const html = await node_fs.readFile(filePath, { encoding: 'utf8' });
-    return Parser.parse(html);
+    return ParseHTML(html);
   } catch (err) {
     throw 'Could not open file: ' + filePath;
   }
@@ -30,10 +31,10 @@ export async function LoadIncludeFile(includeName: string, includePath: string) 
 async function getInclude(includeName: string) {
   const html = includeMap.get(includeName);
   if (html) {
-    return Parser.parse(html);
+    return ParseHTML(html);
   } else {
     try {
-      return Parser.parse(await LoadIncludeFile(includeName, includeName + '.html'));
+      return ParseHTML(await LoadIncludeFile(includeName, includeName + '.html'));
     } catch (err) {
       throw 'Could not load include: ' + includeName;
     }
